@@ -1,4 +1,4 @@
-# catBot
+# birdBot
 A small, simple Twitch chat bot to save and retrieve quotes.
 
 ## Usage
@@ -41,7 +41,7 @@ Name it whatever you want
 
 In OAuth Redirect URLs, put "http://localhost:17563" without the quotes
 
-Select Category Chat Bot
+Select category Chat Bot
 
 Leave it as Confidential
 
@@ -57,7 +57,7 @@ Click "New Secret"
 
 Copy down your Client Secret
 
-Run catBot.exe
+Run birdBot.exe
 
 If you want to run this from a bot account, log in to that bot account in your default browser now.
 

@@ -86,9 +86,9 @@ class Config:
     :type channel_id: str
     :param ignored_list: A list of user IDs for the bot to ignore. Included despite being part of tomlset because they need to be converted to IDs from display names, defaults to None
     :type ignored_list: list
-    :param tomlset: Settings fetched from catBot.toml, defaults to None
+    :param tomlset: Settings fetched from birdBot.toml, defaults to None
     :type tomlset: dict
-    :param tomlstr: Format strings fetched from catBot.toml, defaults to None
+    :param tomlstr: Format strings fetched from birdBot.toml, defaults to None
     :type tomlstr: dict
     :param bot_data: Client ID, Client Secret, and target channel fetched from cache_db, defaults to None
     :type bot_data: dict
@@ -147,8 +147,8 @@ def print_splash(debug: bool = False):
 def insert_quote(quote_info: Quote, config: Config):
     """Takes the Quote object, converts it to a tuple, and inserts it into the quote database.
 
-    :param quote_info: A :class:`catBot.Quote` object containing all the quote info.
-    :type quote_info: catBot.Quote
+    :param quote_info: A :class:`birdBot.Quote` object containing all the quote info.
+    :type quote_info: birdBot.Quote
     """
     if quote_info.key == "":
         quote_info.key = None
@@ -165,8 +165,8 @@ def delete_quote(index: int, config: Config):
 
     :param index: The ID to search for in the quotes database.
     :type index: int
-    :param config: A :class:`catBot.Config`
-    :type config: catBot.Config
+    :param config: A :class:`birdBot.Config`
+    :type config: birdBot.Config
     """
     config.cur.execute("DELETE FROM quotes WHERE id = ?", (index,))
     config.con.commit()
@@ -177,10 +177,10 @@ def update_quote(index: int, new_quote: str, config: Config):
 
     :param index: The ID to search for in the quotes database.
     :type index: int
-    :param new_quote: The text to replace the existing :class:`catBot.Quote.quote` with.
+    :param new_quote: The text to replace the existing :class:`birdBot.Quote.quote` with.
     :type new_quote: str
-    :param config: A :class:`catBot.Config`
-    :type config: catBot.Config
+    :param config: A :class:`birdBot.Config`
+    :type config: birdBot.Config
     """
     config.cur.execute("UPDATE quotes SET quote = ? WHERE id = ?", (new_quote, index))
     config.con.commit()
@@ -264,13 +264,13 @@ async def find_quote(
     :type user_id: str, optional
     :param username: The display name associated with the entered `quoted` or `quoter`.
     :type username: str, optional
-    :param config: A :class:`catBot.Config`
-    :type config: catBot.Config
+    :param config: A :class:`birdBot.Config`
+    :type config: birdBot.Config
 
     :raises TypeError: When no `config` is passed.
 
-    :return: A :class:`catBot.Quote` object containing the fetched info from the quotes database.
-    :rtype: catBot.Quote
+    :return: A :class:`birdBot.Quote` object containing the fetched info from the quotes database.
+    :rtype: birdBot.Quote
     """
 
     results = None
@@ -381,10 +381,10 @@ async def find_quote(
 async def post_quote(quote_info: Quote, config: Config):
     """Posts a Twitch chat message with the information from `quote_info`.
 
-    :param quote_info: A :class:`catBot.Quote` object containing all the quote info.
-    :type quote_info: catBot.Quote
-    :param config: A :class:`catBot.Config`
-    :type config: catBot.Config
+    :param quote_info: A :class:`birdBot.Quote` object containing all the quote info.
+    :type quote_info: birdBot.Quote
+    :param config: A :class:`birdBot.Config`
+    :type config: birdBot.Config
     """
 
     if quote_info.key is not None:
@@ -415,12 +415,12 @@ async def post_quote(quote_info: Quote, config: Config):
 
 
 def is_auth(msg: ChatMessage, config: Config):
-    """Checks if the input :class:`twitchAPI.chat.ChatMessage` is authorized to save manual quotes of the streamer based on the setting in catBot.toml.
+    """Checks if the input :class:`twitchAPI.chat.ChatMessage` is authorized to save manual quotes of the streamer based on the setting in birdBot.toml.
 
     :param msg: The Twitch chat message to be checked for authorization.
     :type msg: twitchAPI.chat.ChatMessage
-    :param config: A :class:`catBot.Config`
-    :type config: catBot.Config
+    :param config: A :class:`birdBot.Config`
+    :type config: birdBot.Config
     :return: True if the user is authorized, False otherwise.
     :rtype: bool
     """
@@ -436,12 +436,12 @@ def is_auth(msg: ChatMessage, config: Config):
 
 
 def is_super_auth(msg: ChatMessage, config: Config):
-    """Checks if the input :class:`twitchAPI.chat.ChatMessage` is authorized to save any type of quote based on the setting in catBot.toml.
+    """Checks if the input :class:`twitchAPI.chat.ChatMessage` is authorized to save any type of quote based on the setting in birdBot.toml.
 
     :param msg: The Twitch chat message to be checked for authorization.
     :type msg: twitchAPI.chat.ChatMessage
-    :param config: A :class:`catBot.Config`
-    :type config: catBot.Config
+    :param config: A :class:`birdBot.Config`
+    :type config: birdBot.Config
     :return: True if the user is authorized, False otherwise.
     :rtype: bool
     """
@@ -469,8 +469,8 @@ async def message_handler(msg: ChatMessage, config: Config):
 
     :param msg: The Twitch chat message to be checked for authorization.
     :type msg: twitchAPI.chat.ChatMessage
-    :param config: A :class:`catBot.Config`
-    :type config: catBot.Config
+    :param config: A :class:`birdBot.Config`
+    :type config: birdBot.Config
     """
     if msg.user.id in config.ignored:
         return
@@ -644,7 +644,7 @@ async def message_handler(msg: ChatMessage, config: Config):
         elif re.search(r"^!quote help$", msg.text):
             await config.chat.send_message(
                 config.target,
-                "Find out how to use !quote at https://github.com/queenside-rook/catBot/blob/main/README.md",
+                "Find out how to use !quote at https://github.com/queenside-rook/birdBot/blob/main/README.md",
             )
 
         elif re.search(r"^!quoted (@|)([A-Za-z_0-9]+)", msg.text):
@@ -691,7 +691,7 @@ async def message_handler(msg: ChatMessage, config: Config):
 
 
 def already_running():
-    """Called when running.temp is found to stop the user from running multiple instances of catBot."""
+    """Called when running.temp is found to stop the user from running multiple instances of birdBot."""
 
     atexit.unregister(exit_script)
     return ctypes.windll.user32.MessageBoxW(
@@ -705,7 +705,7 @@ def already_running():
 async def stop_loop(config: Config):
     """Waits for the user to input "stop" to close the :class:`twitchAPI.chat.Chat` instance and :class:`twitchAPI.twitch.Twitch` instance.
 
-    :param config: A :class:`catBot.Config`
+    :param config: A :class:`birdBot.Config`
     :type config: Config
     """
     while True:
@@ -726,9 +726,9 @@ async def stop_loop(config: Config):
 
 async def start_bot(config: Config):
     """Starts the bot, finishes filling out missing Config fields, authenticates the bot, registers :class:`twitchAPI.type.ChatEvent`s,
-    defines the functions to handle those events, opens the :class:`twitchAPI.chat.Chat` instance and :class:`twitchAPI.twitch.Twitch` instance, then calls `catBot.stop_loop`.
+    defines the functions to handle those events, opens the :class:`twitchAPI.chat.Chat` instance and :class:`twitchAPI.twitch.Twitch` instance, then calls `birdBot.stop_loop`.
 
-    :param config: A :class:`catBot.Config`
+    :param config: A :class:`birdBot.Config`
     :type config: Config
     """
     APP_ID, APP_SECRET, config.target = (
@@ -858,7 +858,7 @@ def get_cache():
 
 
 async def user_input(cache_db=None):
-    """Checks if the encrypted credentials exist, calls `catBot.initialize_cache` if they don't, then waits for the user to select an option. START starts the quote bot, EXIT stops the program,
+    """Checks if the encrypted credentials exist, calls `birdBot.initialize_cache` if they don't, then waits for the user to select an option. START starts the quote bot, EXIT stops the program,
     CHANGEPASS lets the user change their password for their encrypted credentials, CHANGEBOT lets the user change their Client ID and Client Secret or the channel for the bot to operate in.
     """
     if cache_db is None:
@@ -947,8 +947,8 @@ async def user_input(cache_db=None):
 
 
 async def startup_checks(cache_db: TinyDB):
-    """Checks if the bot is already running, loads info from `catBot.toml`, connects to the quotes database, then starts the bot.
-    Begins constructing the :class:`catBot.Quote` for use in the rest of the program.
+    """Checks if the bot is already running, loads info from `birdBot.toml`, connects to the quotes database, then starts the bot.
+    Begins constructing the :class:`birdBot.Quote` for use in the rest of the program.
 
     :param cache_db: The user's encrypted credentials.
     :type cache_db: tinydb.database.TinyDB
@@ -962,17 +962,17 @@ async def startup_checks(cache_db: TinyDB):
             return
         atexit.register(exit_script)
         try:
-            with open("catBot.toml", "rb") as fp:
+            with open("birdBot.toml", "rb") as fp:
                 toml = tomllib.load(fp)
             tomlstr = toml.get("format_strings")
             tomlset = toml.get("settings")
         except FileNotFoundError:
             print(
-                "\033[91mcatBot.toml missing! A new one will be generated for you.\033[0m"
+                "\033[91mbirdBot.toml missing! A new one will be generated for you.\033[0m"
             )
-            with open("catBot.toml", mode="w") as fp:
+            with open("birdBot.toml", mode="w") as fp:
                 fp.write(toml_string.toml_string)
-            with open("catBot.toml", "rb") as fp:
+            with open("birdBot.toml", "rb") as fp:
                 toml = tomllib.load(fp)
             tomlstr = toml.get("format_strings")
             tomlset = toml.get("settings")
