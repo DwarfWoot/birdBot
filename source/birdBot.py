@@ -799,7 +799,7 @@ async def start_bot(config: Config):
 
     async def on_ready(ready_event: EventData):
         await ready_event.chat.join_room(config.target)
-        await config.chat.send_message(config.target, "meow")
+        await config.chat.send_message(config.target, "scree")
 
     async def on_message(msg: ChatMessage):
         await message_handler(msg, config)
