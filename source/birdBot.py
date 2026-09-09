@@ -644,7 +644,7 @@ async def message_handler(msg: ChatMessage, config: Config):
         elif re.search(r"^!quote help$", msg.text):
             await config.chat.send_message(
                 config.target,
-                "Find out how to use !quote at https://github.com/queenside-rook/birdBot/blob/main/README.md",
+                "Find out how to use !quote at https://github.com/dwarfwoot/birdBot/blob/main/README.md",
             )
 
         elif re.search(r"^!quoted (@|)([A-Za-z_0-9]+)", msg.text):
