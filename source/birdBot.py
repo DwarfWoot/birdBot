@@ -150,8 +150,10 @@ def insert_quote(quote_info: Quote, config: Config):
     :param quote_info: A :class:`birdBot.Quote` object containing all the quote info.
     :type quote_info: birdBot.Quote
     """
-    if quote_info.key == "":
-        quote_info.key = None
+    quote_info = list(quote_info)
+    quote_info.remove(quote_info[0])
+    if quote_info[0] == "":
+        quote_info[0] = None
     config.cur.execute(
         """INSERT INTO quotes(key, date, user, category, quote, quoter) 
             VALUES (?,?,?,?,?,?);""",
@@ -210,8 +212,13 @@ async def save_quote(
             config.target, 'Cannot save quotes beginning with "!quote"'
         )
         return
+    quote_id = list(config.cur.execute("SELECT MAX(id) FROM quotes").fetchone())[0]
+    if quote_id is None:
+        quote_id = 1
+    else: 
+        quote_id = quote_id + 1
     quote_info = Quote(
-        ID=config.cur.lastrowid,
+        ID=quote_id,
         key=key,
         date=datetime.now().strftime("%m/%d/%y"),
         user=user,
@@ -333,7 +340,7 @@ async def find_quote(
             return
     elif key is not None:
         if check_data("key", key, config):
-            results = config.cur.execute("SELECT * FROM quotes WHERE key = ?", (key,))
+            results = config.cur.execute("SELECT * FROM quotes WHERE key = ?", (key,)).fetchone()
         else:
             await config.chat.send_message(
                 config.target, config.format_strings.get("invalid_key").format(key=key)
@@ -343,7 +350,7 @@ async def find_quote(
         if check_data("ID", index, config):
             results = config.cur.execute(
                 "SELECT * FROM quotes WHERE id = ?", (index,)
-            )
+            ).fetchone()
         else:
             await config.chat.send_message(
                 config.target, config.format_strings.get("invalid_ID").format(ID=index)
